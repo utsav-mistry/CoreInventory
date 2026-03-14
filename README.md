@@ -147,19 +147,19 @@ All operations → Stock Ledger (immutable audit log)
 
 ## Features
 
-- 🔐 JWT Auth with refresh tokens + OTP password reset
-- 📊 Dashboard with live KPIs and stock movement charts
-- 📦 Product management with SKU, categories, reorder rules
-- 📥 Receipts — incoming goods, validate to increase stock
-- 📤 Delivery Orders — outgoing goods, validate to decrease stock
-- 🔄 Internal Transfers — move between warehouses/locations
-- 🎯 Stock Adjustments — physical count reconciliation
-- 📔 Immutable Stock Ledger — every movement logged
-- 🏭 Multi-warehouse & multi-location support
-- ⚠️ Low stock alerts on dashboard
-- 🔒 MongoDB transactions for atomic stock operations
-- 🛡️ Rate limiting, CORS, Helmet security
-- 🌙 Responsive dark UI
+-  JWT Auth with refresh tokens + OTP password reset
+-  Dashboard with live KPIs and stock movement charts
+-  Product management with SKU, categories, reorder rules
+-  Receipts — incoming goods, validate to increase stock
+-  Delivery Orders — outgoing goods, validate to decrease stock
+-  Internal Transfers — move between warehouses/locations
+-  Stock Adjustments — physical count reconciliation
+-  Immutable Stock Ledger — every movement logged
+-  Multi-warehouse & multi-location support
+-  Low stock alerts on dashboard
+-  MongoDB transactions for atomic stock operations
+-  Rate limiting, CORS, Helmet security
+-  Responsive dark UI
 
 ---
 
