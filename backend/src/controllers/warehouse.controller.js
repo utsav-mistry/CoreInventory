@@ -8,6 +8,14 @@ const getWarehouses = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const getWarehouseById = async (req, res, next) => {
+  try {
+    const warehouse = await Warehouse.findById(req.params.id);
+    if (!warehouse) return errorResponse(res, 'Warehouse not found', 404);
+    return successResponse(res, { warehouse });
+  } catch (err) { next(err); }
+};
+
 const createWarehouse = async (req, res, next) => {
   try {
     const { name, code, address, locations } = req.body;
@@ -33,4 +41,4 @@ const addLocation = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getWarehouses, createWarehouse, updateWarehouse, addLocation };
+module.exports = { getWarehouses, getWarehouseById, createWarehouse, updateWarehouse, addLocation };

@@ -41,7 +41,7 @@ const createProduct = async (req, res, next) => {
   try {
     const { name, sku, category, unitOfMeasure, description, barcode, price, reorderPoint, reorderQuantity, initialStock, warehouseId, locationName } = req.body;
     
-    const product = new Product({ name, sku, category, unitOfMeasure, description, barcode, price, reorderPoint, reorderQuantity, createdBy: req.user._id });
+    const product = new Product({ name, sku, barcode, category, unitOfMeasure, description, price, reorderPoint, reorderQuantity, createdBy: req.user._id });
     
     if (initialStock > 0 && warehouseId && locationName) {
       product.stockByLocation.push({ warehouse: warehouseId, locationName, quantity: initialStock });
@@ -76,11 +76,33 @@ const deleteProduct = async (req, res, next) => {
 
 const getLowStockProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({
+    const { warehouse, category } = req.query;
+    const query = {
       isActive: true,
       $expr: { $lte: ['$totalStock', '$reorderPoint'] },
-    }).populate('category', 'name color').sort({ totalStock: 1 }).limit(50);
-    return successResponse(res, { products });
+    };
+    
+    if (warehouse) query['stockByLocation.warehouse'] = warehouse;
+    if (category) query.category = category;
+
+    const products = await Product.find(query)
+      .populate('category', 'name color')
+      .populate('stockByLocation.warehouse', 'name code')
+      .sort({ totalStock: 1 });
+      
+    // Calculate replenishment suggestions
+    const suggestions = products.map(p => ({
+      _id: p._id,
+      name: p.name,
+      sku: p.sku,
+      currentStock: p.totalStock,
+      reorderPoint: p.reorderPoint,
+      suggestedOrder: Math.max(p.reorderQuantity, (p.reorderPoint * 2) - p.totalStock),
+      unitOfMeasure: p.unitOfMeasure,
+      category: p.category
+    }));
+
+    return successResponse(res, { products: suggestions });
   } catch (err) { next(err); }
 };
 

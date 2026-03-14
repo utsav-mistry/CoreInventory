@@ -1,15 +1,25 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Input from '@/components/ui/Input';
 import { receiptAPI, productAPI, warehouseAPI } from '@/lib/api';
+import { PageLoader } from '@/components/ui/Spinner';
 import { getErrorMessage } from '@/lib/utils';
 import { Plus, Trash2, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function NewReceiptPage() {
+  return (
+    <Suspense fallback={<PageWrapper title="New Receipt"><PageLoader /></PageWrapper>}>
+      <NewReceiptForm />
+    </Suspense>
+  );
+}
+
+function NewReceiptForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [warehouses, setWarehouses] = useState([]);
   const [products, setProducts] = useState([]);
   const [productSearch, setProductSearch] = useState('');
@@ -19,6 +29,22 @@ export default function NewReceiptPage() {
 
   useEffect(() => {
     warehouseAPI.getAll().then(({ data }) => setWarehouses(data.data.warehouses));
+    
+    // Check for pre-filled product from Replenishment
+    const prefillProductId = searchParams.get('product');
+    const prefillQty = searchParams.get('qty');
+    if (prefillProductId) {
+      productAPI.getById(prefillProductId).then(({ data }) => {
+        const p = data.data.product;
+        setLineItems([{ 
+          product: p._id, 
+          expectedQuantity: Number(prefillQty) || 1, 
+          unitOfMeasure: p.unitOfMeasure, 
+          _productName: p.name, 
+          _productSku: p.sku 
+        }]);
+      });
+    }
   }, []);
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Package, ArrowDownToLine, ArrowUpFromLine,
   ArrowLeftRight, ClipboardEdit, BookOpen, Warehouse, Settings,
-  LogOut, User, Bell, ChevronDown, Boxes, ShieldCheck
+  LogOut, User, Bell, ChevronDown, Boxes, ShieldCheck, RefreshCcw, LayoutGrid
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -18,6 +18,8 @@ export default function Sidebar() {
   const navItems = [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
     { label: 'Products', href: '/products', icon: Package },
+    { label: 'Replenishments', href: '/replenishments', icon: RefreshCcw },
+    { label: 'Categories', href: '/categories', icon: LayoutGrid },
     {
       label: 'Operations', icon: Boxes, children: [
         { label: 'Receipts', href: '/receipts', icon: ArrowDownToLine },

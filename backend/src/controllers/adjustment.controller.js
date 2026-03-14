@@ -42,6 +42,12 @@ const validateAdjustment = async (req, res, next) => {
     const adjustment = await StockAdjustment.findById(req.params.id).session(session);
     if (!adjustment) { await session.abortTransaction(); return errorResponse(res, 'Adjustment not found.', 404); }
     if (adjustment.status === STATUS.DONE) { await session.abortTransaction(); return errorResponse(res, 'Already validated.', 400); }
+    
+    // Only managers and admins can validate adjustments
+    if (!['admin', 'manager'].includes(req.user.role)) {
+      await session.abortTransaction();
+      return errorResponse(res, 'Only managers or admins can validate stock adjustments.', 403);
+    }
 
     for (const item of adjustment.lineItems) {
       await updateStock(session, {

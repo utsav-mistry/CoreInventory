@@ -25,7 +25,7 @@ export default function ProductsPage() {
   const [showModal, setShowModal] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
 
-  const [form, setForm] = useState({ name: '', sku: '', category: '', unitOfMeasure: '', description: '', price: '', reorderPoint: '10', reorderQuantity: '50', initialStock: '0', warehouseId: '', locationName: '' });
+  const [form, setForm] = useState({ name: '', sku: '', barcode: '', category: '', unitOfMeasure: '', description: '', price: '', reorderPoint: '10', reorderQuantity: '50', initialStock: '0', warehouseId: '', locationName: '' });
   const [submitting, setSubmitting] = useState(false);
 
   const fetchProducts = useCallback(async (params = {}) => {
@@ -56,7 +56,7 @@ export default function ProductsPage() {
       await productAPI.create({ ...form, price: Number(form.price), reorderPoint: Number(form.reorderPoint), reorderQuantity: Number(form.reorderQuantity), initialStock: Number(form.initialStock) });
       toast.success('Product created successfully!');
       setShowModal(false);
-      setForm({ name: '', sku: '', category: '', unitOfMeasure: '', description: '', price: '', reorderPoint: '10', reorderQuantity: '50', initialStock: '0', warehouseId: '', locationName: '' });
+      setForm({ name: '', sku: '', barcode: '', category: '', unitOfMeasure: '', description: '', price: '', reorderPoint: '10', reorderQuantity: '50', initialStock: '0', warehouseId: '', locationName: '' });
       fetchProducts();
     } catch (err) { toast.error(getErrorMessage(err)); }
     finally { setSubmitting(false); }
@@ -153,6 +153,7 @@ export default function ProductsPage() {
           <div className="grid grid-cols-2 gap-4">
             <Input label="Product Name *" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Steel Rod 10mm" required />
             <Input label="SKU / Code *" value={form.sku} onChange={e => setForm(p => ({ ...p, sku: e.target.value.toUpperCase() }))} placeholder="STL-ROD-10MM" required />
+            <Input label="Barcode" value={form.barcode} onChange={e => setForm(p => ({ ...p, barcode: e.target.value }))} placeholder="EAN-13, UPC..." />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">

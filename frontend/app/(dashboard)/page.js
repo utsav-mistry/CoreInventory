@@ -6,20 +6,46 @@ import RecentActivity from '@/components/dashboard/RecentActivity';
 import StockChart from '@/components/dashboard/StockChart';
 import { dashboardAPI } from '@/lib/api';
 import { PageLoader } from '@/components/ui/Spinner';
-import { Package, TrendingDown, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { warehouseAPI } from '@/lib/api';
+import { 
+  Warehouse as WarehouseIcon, 
+  Filter, 
+  Package, 
+  AlertTriangle, 
+  TrendingDown, 
+  ArrowDownToLine, 
+  ArrowUpFromLine, 
+  ArrowLeftRight, 
+  BarChart3,
+  LayoutGrid
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [warehouses, setWarehouses] = useState([]);
+  const [selectedWarehouse, setSelectedWarehouse] = useState('');
 
   useEffect(() => {
-    dashboardAPI.getStats()
-      .then(({ data }) => setStats(data.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+    fetchStats();
+    warehouseAPI.getAll()
+      .then(({ data }) => setWarehouses(data.data.warehouses))
+      .catch(console.error);
+  }, [selectedWarehouse]);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const { data } = await dashboardAPI.getStats({ warehouse: selectedWarehouse });
+      setStats(data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Process chart data
   const chartData = (() => {
@@ -41,6 +67,36 @@ export default function DashboardPage() {
   return (
     <PageWrapper title="Dashboard">
       <div className="space-y-6">
+        {/* Filter Bar */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-card p-4">
+          <div className="flex items-center gap-2 text-gray-400">
+            <Filter className="w-4 h-4" />
+            <span className="text-sm font-medium">Dashboard Filter</span>
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <WarehouseIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <select 
+                className="input-field pl-9 py-2 text-sm"
+                value={selectedWarehouse}
+                onChange={(e) => setSelectedWarehouse(e.target.value)}
+              >
+                <option value="">Global Overview (All Warehouses)</option>
+                {warehouses.map(w => (
+                  <option key={w._id} value={w._id}>{w.name} ({w.code})</option>
+                ))}
+              </select>
+            </div>
+            {selectedWarehouse && (
+              <button 
+                onClick={() => setSelectedWarehouse('')}
+                className="text-xs text-brand-400 hover:text-brand-300 font-medium whitespace-nowrap"
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
+        </div>
         {/* Alert Banner */}
         {(kpis?.lowStockProducts > 0 || kpis?.outOfStockProducts > 0) && (
           <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-5 py-4 flex items-center justify-between">
@@ -69,16 +125,38 @@ export default function DashboardPage() {
 
         {/* Chart + Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 glass-card p-5">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-semibold text-white">Stock Movement — Last 7 Days</h3>
-              <BarChart3 className="w-4 h-4 text-gray-500" />
+          <div className="lg:col-span-2 space-y-6">
+            <div className="glass-card p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="font-semibold text-white">Stock Movement — Last 30 Days</h3>
+                <BarChart3 className="w-4 h-4 text-gray-500" />
+              </div>
+              {chartData.length > 0 ? (
+                <StockChart data={chartData} />
+              ) : (
+                <div className="h-[220px] flex items-center justify-center text-gray-600 text-sm">No movement data yet</div>
+              )}
             </div>
-            {chartData.length > 0 ? (
-              <StockChart data={chartData} />
-            ) : (
-              <div className="h-[220px] flex items-center justify-center text-gray-600 text-sm">No movement data yet</div>
-            )}
+
+            {/* Category Breakdown */}
+            <div className="glass-card p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="font-semibold text-white">Inventory by Category</h3>
+                <LayoutGrid className="w-4 h-4 text-gray-500" />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {stats?.stockByCategory?.map(cat => (
+                  <div key={cat.name} className="bg-surface-100/50 border border-white/5 rounded-xl p-4 flex flex-col gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
+                      <span className="text-xs font-medium text-gray-400 truncate">{cat.name}</span>
+                    </div>
+                    <p className="text-xl font-bold text-white tabular-nums">{cat.totalStock.toLocaleString()}</p>
+                    <p className="text-[10px] text-gray-600 uppercase font-bold tracking-wider">{cat.count} Items</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <RecentActivity activities={stats?.recentActivity || []} />
         </div>

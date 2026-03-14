@@ -63,7 +63,7 @@ export const authAPI = {
 };
 
 export const dashboardAPI = {
-  getStats: () => api.get('/dashboard/stats'),
+  getStats: (params) => api.get('/dashboard/stats', { params }),
 };
 
 export const productAPI = {
@@ -83,6 +83,7 @@ export const categoryAPI = {
 
 export const warehouseAPI = {
   getAll: () => api.get('/warehouses'),
+  getById: (id) => api.get(`/warehouses/${id}`),
   create: (data) => api.post('/warehouses', data),
   update: (id, data) => api.put(`/warehouses/${id}`, data),
   addLocation: (id, data) => api.post(`/warehouses/${id}/locations`, data),
