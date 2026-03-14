@@ -1,0 +1,10 @@
+const express = require('express');
+const router = express.Router();
+const { getWarehouses, createWarehouse, updateWarehouse, addLocation } = require('../controllers/warehouse.controller');
+const { protect } = require('../middleware/auth');
+router.use(protect);
+router.get('/', getWarehouses);
+router.post('/', createWarehouse);
+router.put('/:id', updateWarehouse);
+router.post('/:id/locations', addLocation);
+module.exports = router;

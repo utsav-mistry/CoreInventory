@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const { getDeliveries, createDelivery, getDeliveryById, validateDelivery, updateDeliveryStatus, cancelDelivery } = require('../controllers/delivery.controller');
+const { protect } = require('../middleware/auth');
+router.use(protect);
+router.get('/', getDeliveries);
+router.get('/:id', getDeliveryById);
+router.post('/', createDelivery);
+router.patch('/:id/status', updateDeliveryStatus);
+router.post('/:id/validate', validateDelivery);
+router.post('/:id/cancel', cancelDelivery);
+module.exports = router;

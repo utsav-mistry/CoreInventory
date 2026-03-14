@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const { getReceipts, getReceiptById, createReceipt, updateReceiptStatus, validateReceipt, cancelReceipt } = require('../controllers/receipt.controller');
+const { protect } = require('../middleware/auth');
+router.use(protect);
+router.get('/', getReceipts);
+router.get('/:id', getReceiptById);
+router.post('/', createReceipt);
+router.patch('/:id/status', updateReceiptStatus);
+router.post('/:id/validate', validateReceipt);
+router.post('/:id/cancel', cancelReceipt);
+module.exports = router;
