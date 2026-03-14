@@ -76,7 +76,6 @@ export default function UsersManagementPage() {
                   <div>
                     <h3 className="text-white font-semibold leading-tight">{user.name}</h3>
                     <div className="flex items-center gap-1.5 mt-1 text-xs text-gray-500 uppercase tracking-wider font-medium">
-                      <Shield className="w-3 h-3" />
                       {user.role}
                     </div>
                   </div>
@@ -103,9 +102,9 @@ export default function UsersManagementPage() {
                           className="input-field py-2 text-sm"
                           defaultValue={user.role}
                         >
-                          <option value="staff">Operations Staff</option>
-                          <option value="manager">Warehouse Manager</option>
-                          <option value="admin">System Admin</option>
+                          <option value="staff">Staff</option>
+                          <option value="manager">Manager</option>
+                          <option value="admin">Admin</option>
                         </select>
                       </div>
                       <div className="flex gap-2">
