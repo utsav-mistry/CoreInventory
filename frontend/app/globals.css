@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sidebar-width: 260px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0f1117;
+  color: #e2e8f0;
+  font-family: var(--font-geist-sans, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4a5568; }
+
+/* Custom focus ring */
+.focus-ring:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface-50/80 backdrop-blur-sm border border-white/5 rounded-xl;
+  }
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-600 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-surface-100 hover:bg-surface-200 text-gray-300 hover:text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 active:scale-95;
+  }
+  .btn-danger {
+    @apply bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 font-medium px-4 py-2 rounded-lg transition-all duration-200 border border-red-500/20;
+  }
+  .input-field {
+    @apply w-full bg-surface-100 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 transition-all duration-200;
+  }
+  .table-row {
+    @apply border-b border-white/5 hover:bg-white/[0.02] transition-colors duration-150;
+  }
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200 cursor-pointer;
+  }
+  .nav-link.active {
+    @apply text-brand-400 bg-brand-500/10 hover:bg-brand-500/15;
+  }
+  .page-title {
+    @apply text-2xl font-semibold text-white tracking-tight;
+  }
+  .section-header {
+    @apply text-sm font-medium text-gray-400 uppercase tracking-wider;
+  }
+}
